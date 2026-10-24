@@ -1,0 +1,113 @@
+# ALTERNATIVE TEMPLATE: install as .github/workflows/qa.yml in the authorized
+# fallback-shop repository, replacing the EverShop QA template. Never install both.
+# Shop's finalized interface: demo/fallback-shop/README.md. No DB/seed required.
+# Target: blondeslover32/qa-demo-shop, default baseline, shop at repository root.
+name: QA
+
+"on":
+  pull_request:
+    branches: [baseline]
+  push:
+    branches: [baseline]
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+    inputs:
+      plan_id:
+        description: Existing problem plan ID; empty replays the kept suite
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qa:
+    name: QA gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      QA_BASE_URL: http://localhost:3000
+      BASE_URL: http://localhost:3000
+      PORT: '3000'
+    steps:
+      - name: Check out the actual fallback head with diff history
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Check required fallback handoffs
+        env:
+          QA_API_URL: ${{ secrets.QA_API_URL }}
+          QA_PROJECT_KEY: ${{ secrets.QA_PROJECT_KEY }}
+        run: |
+          test -n "$QA_API_URL" || { echo 'Missing QA_API_URL secret'; exit 2; }
+          test -n "$QA_PROJECT_KEY" || { echo 'Missing QA_PROJECT_KEY secret (external-fork PRs have no secrets)'; exit 2; }
+          test -f lib/catalog.ts && test -f lib/cart-count.ts && test -f components/order-note.tsx
+          echo 'App under test: synthetic fallback shop. Excluded from historical EverShop metric.'
+      - name: Install the fallback locked dependencies
+        run: npm ci
+      - name: Build the deterministic fallback source
+        run: npm run build
+      - name: Start and wait for the fallback
+        run: |
+          nohup npm run start -- --port 3000 > store.log 2>&1 &
+          for i in $(seq 1 90); do
+            if curl -fsS -o /dev/null http://localhost:3000/; then exit 0; fi
+            sleep 2
+          done
+          tail -80 store.log
+          exit 2
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.59.1
+          npx playwright install --with-deps chromium
+      - name: Download the standalone runner from the brain
+        env:
+          QA_API_URL: ${{ secrets.QA_API_URL }}
+        run: |
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' "${QA_API_URL%/}/runner.mjs" -o runner.mjs
+          node --check runner.mjs
+          sha256sum runner.mjs > runner.sha256
+      - name: Run QA and preserve its exit status
+        env:
+          QA_API_URL: ${{ secrets.QA_API_URL }}
+          QA_PROJECT_KEY: ${{ secrets.QA_PROJECT_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          PLAN_ID: ${{ inputs.plan_id }}
+        run: |
+          case "$GITHUB_EVENT_NAME" in
+            pull_request) args=(--mode pr) ;;
+            push) args=(--mode suite --trigger deploy) ;;
+            schedule) args=(--mode suite --trigger cron) ;;
+            workflow_dispatch)
+              args=(--mode suite --trigger manual)
+              if [[ -n "$PLAN_ID" ]]; then args+=(--plan "$PLAN_ID"); fi
+              ;;
+            *) echo "Unsupported event: $GITHUB_EVENT_NAME"; exit 2 ;;
+          esac
+          node runner.mjs "${args[@]}" --base-url "$QA_BASE_URL"
+      - name: Keep fallback evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fallback-qa-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/
+            store.log
+            runner.sha256
+          if-no-files-found: warn
+          retention-days: 7
