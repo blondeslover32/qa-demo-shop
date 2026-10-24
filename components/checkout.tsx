@@ -61,7 +61,7 @@ export function Checkout() {
           const form = new FormData(event.currentTarget);
           const confirmation = {
             reference: `DEMO-${Date.now().toString(36).toUpperCase()}`,
-            note: String(form.get("note") || "").trim(),
+            note: String(form.get("note") || "").trim().slice(0, 40),
             total: subtotal + shippingCost,
           };
           try {
