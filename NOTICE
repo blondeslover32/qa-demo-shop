@@ -1,0 +1,6 @@
+QA demo shop — standalone fallback for a browser QA demonstration.
+
+Sample product photographs are from EverShop (https://github.com/evershopcommerce/evershop).
+The upstream seed asset provenance is retained in public/products/ATTRIBUTION.md.
+Distributed under the GNU General Public License version 3, included in LICENSE.
+This is a synthetic fallback demo and is not an upstream EverShop release.

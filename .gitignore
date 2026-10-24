@@ -1,0 +1,14 @@
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+test-results/
+playwright-report/
+artifacts/
+.impeccable/review/
+
+.env
+.env.*
+.replay-checkout
+qa/generated/
+qa-artifacts/
