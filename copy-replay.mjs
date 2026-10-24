@@ -6,7 +6,7 @@ if (!['742', '955'].includes(issue) || !targetInput) throw new Error('Usage: nod
 const source = import.meta.dirname;
 const target = resolve(targetInput);
 if (existsSync(target) || target.startsWith(source + '/')) throw new Error('Replay target must be a new directory outside the baseline.');
-const ignored = new Set(['node_modules', '.next', 'artifacts', 'test-results', '.replay-checkout']);
+const ignored = new Set(['.git', 'node_modules', '.next', 'artifacts', 'test-results', '.replay-checkout']);
 cpSync(source, target, { recursive: true, filter: (path) => !ignored.has(basename(path)) });
 // Turbopack intentionally refuses dependencies symlinked outside its project root.
 cpSync(resolve(source, 'node_modules'), resolve(target, 'node_modules'), { recursive: true });
