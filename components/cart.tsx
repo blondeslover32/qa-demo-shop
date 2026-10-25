@@ -127,7 +127,7 @@ export function Cart() {
             </div>
             <div>
               <dt>Standard shipping</dt>
-              <dd>{formatMoney(shippingCost)}</dd>
+              <dd>{formatMoney(shippingCost * cart.items.length)}</dd>
             </div>
             <div className="total">
               <dt>Total</dt>
@@ -135,7 +135,7 @@ export function Cart() {
             </div>
           </dl>
           <Link className="button" href="/checkout">
-            Checkout
+            Checkout ({cart.items.length} items)
           </Link>
           <p className="muted">Cash on Delivery · US addresses</p>
         </aside>
