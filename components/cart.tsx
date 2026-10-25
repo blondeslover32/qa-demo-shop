@@ -12,8 +12,7 @@ export function Cart() {
   const subtotal = cart.items.reduce(
     (sum, item) =>
       sum +
-      products.find((product) => product.id === item.productId)!.price *
-        item.quantity,
+      products.find((product) => product.id === item.productId)!.price,
     0
   );
   if (!cart.items.length)
@@ -78,7 +77,7 @@ export function Cart() {
                     className="text-button"
                     onClick={() => {
                       try {
-                        cart.remove(item.productId);
+                        cart.remove(cart.items[0].productId);
                       } catch {
                         setError(
                           "Your cart could not be saved. Enable browser storage and try again."
