@@ -6,8 +6,8 @@
   --line: #d9dfd9;
   --primary: #245c3a;
   --primary-hover: #19472c;
-  --accent: #f5c518;
-  --accent-hover: #e0ad00;
+  --accent: #c62828;
+  --accent-hover: #a51f1f;
   --error: #a42a23;
   --radius: 8px;
   color-scheme: light;
@@ -246,15 +246,13 @@ main {
 .add-button {
   gap: 8px;
   background: var(--accent);
-  color: var(--ink);
-  box-shadow: 0 1px 2px #8a6a0033;
+  box-shadow: 0 1px 2px #8b1a1a33;
   transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 .add-button:hover {
   background: var(--accent-hover);
-  color: var(--ink);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px #8a6a0033;
+  box-shadow: 0 6px 16px #8b1a1a33;
 }
 .add-button:active {
   background: var(--accent-hover);
