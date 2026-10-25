@@ -2,18 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { products, formatMoney } from "../lib/catalog";
 import { useCart } from "../lib/cart";
-
-const addedFeedbackMs = 1500;
 
 export function Products() {
   const cart = useCart();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [addedId, setAddedId] = useState("");
-  const addedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   return (
     <>
       <div className="page-intro">
@@ -50,11 +47,6 @@ export function Products() {
                   cart.add(product.id, quantity);
                   setMessage(`${quantity} ${product.name} added to your cart.`);
                   setAddedId(product.id);
-                  clearTimeout(addedTimer.current);
-                  addedTimer.current = setTimeout(
-                    () => setAddedId(""),
-                    addedFeedbackMs
-                  );
                 } catch (cause) {
                   setError(
                     cause instanceof Error
