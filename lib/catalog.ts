@@ -31,5 +31,5 @@ export const formatMoney = (cents: number) =>
 export const shippingCost = 500;
 export const freeShippingFrom = 5000;
 export const shippingFor = (subtotal: number) =>
-  subtotal > freeShippingFrom ? 0 : shippingCost;
+  subtotal >= freeShippingFrom ? 0 : shippingCost;
 export type CartLine = { productId: string; quantity: number };
