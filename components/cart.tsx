@@ -99,7 +99,24 @@ export function Cart() {
               {error}
             </p>
           )}
-          <Link href="/">Continue shopping</Link>
+          <div className="cart-actions">
+            <Link href="/">Continue shopping</Link>
+            <button
+              className="text-button"
+              onClick={() => {
+                if (!window.confirm("Remove everything from your cart?")) return;
+                try {
+                  cart.clear();
+                } catch {
+                  setError(
+                    "Your cart could not be saved. Enable browser storage and try again."
+                  );
+                }
+              }}
+            >
+              Empty cart
+            </button>
+          </div>
         </section>
         <aside className="summary">
           <h2>Order summary</h2>
