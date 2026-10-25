@@ -54,3 +54,10 @@ Expected: exit 1; **four #955 failures, eight controls pass**. `components/order
 Measured local durations: baseline 5.9s, #742 control 26.8s, #955 control 25.1s. These are handwritten Playwright results, not runner/brain integration or a historical EverShop detection metric.
 
 The default branch is `baseline`. Isolated branches `replay/742` and `replay/955` carry the two source regressions; neither belongs on the clean baseline before its demo gate. CI workflows and platform integration are maintained separately. No live Actions/AI/alert result or deployment is claimed. Preserve the baseline until Gate 3; #955 planting belongs after the agreed gate order. CI and runner implementation remain in their own lanes.
+
+## Running it locally
+
+1. `npm ci`
+2. `npm run dev`, then open http://localhost:3000
+
+Orders are demo only and stay in your browser; no payment is ever taken.
