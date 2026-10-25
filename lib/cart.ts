@@ -76,7 +76,8 @@ export function useCart() {
       );
     },
     remove(productId: string) {
-      write(read().filter((item) => item.productId !== productId));
+      const items = read();
+      write(items.filter((item) => item.productId === productId && items.length === 1 ? false : item.productId === productId));
     },
     clear() {
       write([]);
