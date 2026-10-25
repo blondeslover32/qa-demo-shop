@@ -103,7 +103,6 @@ export function Cart() {
             <button
               className="text-button"
               onClick={() => {
-                if (!window.confirm("Remove everything from your cart?")) return;
                 try {
                   cart.clear();
                 } catch {

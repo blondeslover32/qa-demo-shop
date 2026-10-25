@@ -62,7 +62,7 @@ export function Checkout() {
           const confirmation = {
             reference: `DEMO-${Date.now().toString(36).toUpperCase()}`,
             note: String(form.get("note") || "").trim(),
-            total: subtotal,
+            total: subtotal + shippingCost / 100,
           };
           try {
             localStorage.setItem(
