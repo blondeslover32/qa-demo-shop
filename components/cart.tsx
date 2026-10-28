@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "../lib/cart";
-import { products, formatMoney, shippingCost } from "../lib/catalog";
+import { products, formatMoney, freeShippingFrom, shippingFor } from "../lib/catalog";
 
 export function Cart() {
   const cart = useCart();
@@ -127,13 +127,18 @@ export function Cart() {
             </div>
             <div>
               <dt>Standard shipping</dt>
-              <dd>{formatMoney(shippingCost)}</dd>
+              <dd>{shippingFor(subtotal) ? formatMoney(shippingFor(subtotal)) : "Free"}</dd>
             </div>
             <div className="total">
               <dt>Total</dt>
-              <dd>{formatMoney(subtotal + shippingCost)}</dd>
+              <dd>{formatMoney(subtotal + shippingFor(subtotal))}</dd>
             </div>
           </dl>
+          {shippingFor(subtotal) > 0 && (
+            <p className="muted">
+              You're {formatMoney(freeShippingFrom - subtotal)} away from free shipping.
+            </p>
+          )}
           <Link className="button" href="/checkout">
             Checkout
           </Link>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "../lib/cart";
-import { products, formatMoney, shippingCost } from "../lib/catalog";
+import { products, formatMoney, shippingCost, shippingFor } from "../lib/catalog";
 import { OrderNote } from "./order-note";
 
 type Confirmation = { reference: string; note: string; total: number };
@@ -62,7 +62,7 @@ export function Checkout() {
           const confirmation = {
             reference: `DEMO-${Date.now().toString(36).toUpperCase()}`,
             note: String(form.get("note") || "").trim(),
-            total: subtotal + shippingCost,
+            total: subtotal + shippingFor(subtotal),
           };
           try {
             localStorage.setItem(
@@ -211,11 +211,11 @@ export function Checkout() {
             </div>
             <div>
               <dt>Shipping</dt>
-              <dd>{formatMoney(shippingCost)}</dd>
+              <dd>{shippingFor(subtotal) ? formatMoney(shippingFor(subtotal)) : "Free"}</dd>
             </div>
             <div className="total">
               <dt>Total</dt>
-              <dd>{formatMoney(subtotal + shippingCost)}</dd>
+              <dd>{formatMoney(subtotal + shippingFor(subtotal))}</dd>
             </div>
           </dl>
           <button type="submit">Place demo order</button>

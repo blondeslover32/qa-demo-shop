@@ -9,6 +9,7 @@ export function Header() {
   const count = cartQuantity(items);
   return (
     <header className="site-header">
+      <p className="promo">Free shipping on orders of $50 or more</p>
       <Link className="wordmark" href="/" aria-label="EverShop demo home">
         EverShop<span>demo</span>
       </Link>
